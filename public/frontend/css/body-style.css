@@ -1,0 +1,65 @@
+body,
+html {
+    background-color: white !important;
+    padding-top: 0px !important;
+}
+
+.navbar-fixed-top,
+.navbar-fixed-bottom {
+    position: relative;
+    margin-bottom: 0px !important;
+}
+
+.header_container {
+    margin-bottom: 10px;
+}
+
+.question-head {
+    padding: 0px;
+    background-color: white !important;
+}
+
+.ques-ans-body {
+    padding: 0px;
+}
+
+#treaty-image {
+    float: left;
+    width: 300px;
+    margin: 0 10px 10px 0;
+    background: white;
+    padding: 5px;
+}
+
+.h-text {
+    font-size: 16px;
+}
+
+.area_treatment {
+    font-size: 20px;
+    color: white;
+    font-weight: normal;
+}
+.country_name_body {
+    font-size: 22px;
+    font-weight: normal;
+    margin-top: 10px;
+    color: white;
+}
+.city {
+    display: inline-block !important;
+    border-bottom: 1px dotted white;
+    font-size: 18px;
+    font-weight: normal;
+    margin: 0;
+    color: white;
+}
+#breadcrumbs ul>li {
+    margin-left: 20px;
+}
+.left-sidebar {
+    padding:0  15px;
+}
+.checkbox_stars {
+    font-size: 18px;
+}

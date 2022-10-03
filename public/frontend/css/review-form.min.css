@@ -1,0 +1,2 @@
+
+.review-form .control-label{font-size:18px}.review-form .comment-positive{color:#449d44}.review-form .comment-negative{color:#ee3e27}.review-form textarea.form-control{resize:none;font-size:16px}.glyphicon-spin{-webkit-animation:spin 1000ms infinite linear;animation:spin 1000ms infinite linear}@-webkit-keyframes spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}100%{-webkit-transform:rotate(359deg);transform:rotate(359deg)}}@keyframes spin{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}100%{-webkit-transform:rotate(359deg);transform:rotate(359deg)}}

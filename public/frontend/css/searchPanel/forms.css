@@ -1,0 +1,29 @@
+.b-reserved{background:#095c6a;padding:0 5px 10px;margin:0 auto}
+.form-element-dropdown{background:#fff;border-radius:5px}
+#main-form{padding-top:8px}
+.form-element{background:#fff;font-size:16px}
+.form-element:hover{background:#fff;font-size:16px}
+a.drop1{background:#fff!important;color:#174445;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px}
+.form-element:hover{background:#fff}
+.form-group input{-webkit-border-radius:0!important;-moz-border-radius:0!important;border-radius:0!important}
+.form-group select{-webkit-border-radius:0!important;-moz-border-radius:0!important;border-radius:0!important}
+.form-control:focus{border:1px solid #09bd9f!important}
+.input-group-addon{border-radius:0!important}
+.form-group-element{width:100%}
+.form-group-element > li > a{color:#174445;text-decoration:none}
+.form-group-element > li > a:hover{color:#174445}
+.form-control{border:none}
+.b-c-db{background:#095c6a;position:relative;margin-top:-155px}
+.search-f{position:relative}
+.search-f::before{position:absolute;content:"";background:url(../images/icons/search.png);height:16px;width:16px;top:10px;right:8px}
+.date-f{position:relative}
+.date-f::before{position:absolute;content:"";background:url(../images/icons/date.png);background-size:16px 16px;height:16px;width:16px;top:34px;right:8px}
+.date-f.not_label::before{position:absolute;content:"";background:url(../images/icons/date.png);background-size:16px 16px;height:16px;width:16px;top:10px!important;right:8px}
+.date-f.line{font-weight:600;color:#003C3E;font-size:13.5px;height:48px;border-radius:0!important;background-color: #fff;}
+.date-f.line::before{position:absolute;content:"";background:url(/frontend/images/icons/calendar.png);background-size:16px 16px;height:16px;width:16px;top:16px!important;left:14px}
+.time-f{position:relative}
+.time-f::before{position:absolute;content:"";background:url(../images/icons/time.png);background-size:16px 16px;height:16px;width:16px;top:34px;right:8px}
+.data-f{padding-left:0!important}
+form div#popup-person span.filter-option label.new_label{cursor:pointer;}
+form ul.selectpicker li{border-bottom:1px solid #ddd;}
+form ul.selectpicker li[rel="2"] label.new_label{font-weight: bold !important;}

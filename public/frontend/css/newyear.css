@@ -1,0 +1,47 @@
+
+
+/*newyear*/
+#newyear {
+    position: relative;
+}
+#newyear .h2_new {
+    color: #557200;
+}
+#newyear .newyear_top {
+    position: absolute;
+    top:0;
+    right:0;
+    width: 160px;
+    height: 200px;
+    background: url("../images/newyear_prav.png") no-repeat top right;
+}
+#newyear .newyear_bottom {
+    position: absolute;
+    bottom:0;
+    left: 0;
+    width: 160px;
+    height: 200px;
+    background: url("../images/newyear_prav2.png") no-repeat bottom left;
+}
+#newyear .newyear_content {
+    padding: 0 30px;
+    font-size: 16px;
+    font-family: 'PT Sans',sans-serif;
+    min-height: 150px;
+}
+#newyear .newyear_content .newyear_viewed {
+    display: block;
+}
+#newyear .newyear_content .newyear_hidden {
+    display: none;
+}
+#newyear .newyear_readmore {
+    float: right;
+}
+#newyear .newyear_readmore.newyear_maximaze {
+    display: block;
+}
+#newyear .newyear_readmore.newyear_minimaze {
+    display: none;
+}
+/*//newyear*/

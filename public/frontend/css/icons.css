@@ -1,0 +1,72 @@
+.icon-my {
+	background-size: 22px 22px;
+	background-repeat: no-repeat;
+}
+
+.icon-my.icon-left {
+	padding-left: 30px;
+	background-position: 5px center;
+}
+
+.icon-my.icon-right {
+	padding-right: 30px;
+	background-position: right 5px center;
+}
+
+.icon-my.icon-email {
+	background-image: url("../img/icons/email.png");
+}
+
+.icon-my.icon-datepicker {
+	background-image: url("../img/icons/datepicker.png");
+}
+
+.icon-my.icon-timepicker {
+	background-image: url("../img/icons/timepicker.png");
+}
+
+.icon-my.icon-search-destination {
+	background-image: url("../img/icons/search_destination.png");
+}
+
+.icon-my.icon-search-person {
+	background-image: url("../img/icons/search_person.png");
+}
+
+.icon-my.icon-search-calendar {
+	background-image: url("../img/icons/search_calendar.png");
+}
+
+
+
+
+
+
+
+
+
+/* icon adventages */
+
+.icon-adventages {
+	padding-left:50px;
+	-webkit-background-size: 44px 44px;
+	background-size:44px 44px;
+	background-position: left center;
+	background-repeat: no-repeat;
+}
+
+.icon-adventages.adventages-1 {
+	background-image: url("../img/icons/advantages_small_1.png");
+}
+
+.icon-adventages.adventages-2 {
+	background-image: url("../img/icons/advantages_small_2.png");
+}
+
+.icon-adventages.adventages-3 {
+	background-image: url("../img/icons/advantages_small_3.png");
+}
+
+.icon-adventages.adventages-4 {
+	background-image: url("../img/icons/advantages_small_4.png");
+}

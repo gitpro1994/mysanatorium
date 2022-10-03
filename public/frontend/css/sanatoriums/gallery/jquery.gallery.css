@@ -1,0 +1,214 @@
+.hasGallery {
+    width: 100%;
+    height: 98%;
+}
+
+.gallery-control {
+    margin: 4px auto;
+    text-align: center;
+    width: 200px;
+}
+
+.gallery-prev {
+    background: url('images/arrow-left.png') left top no-repeat;
+    width: 50px;
+    height: 50px;
+    display: block;
+    float: left;
+    cursor: pointer;
+    font-size: 0.5em;
+    color: #FFFFFF;
+}
+
+.gallery-prev:hover { background-position: bottom; }
+.gallery-prev em { position: relative; top: 20px; z-index: -1; }
+
+
+.gallery-next {
+    background: url('images/arrow-right.png') left top no-repeat;
+    width: 50px;
+    height: 50px;
+    display: block;
+    float: right;
+    cursor: pointer;
+    font-size: 0.5em;
+    color: #FFFFFF;
+}
+
+.gallery-next:hover { background-position: bottom; }
+.gallery-next em { position: relative; top: 20px; z-index: -1; }
+
+
+.gallery-pager {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 15px;
+    position: relative;
+    top: 10px;
+}
+
+.gallery-info li {width: 75%;}
+
+
+.gallery-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.gallery-slider li {
+    display: none;
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    text-align: center;
+}
+
+.gallery-slider div.wrapper {
+    position: relative;
+    padding: 0;
+    margin: 0 auto;
+    display: inline-block;
+    width: auto;
+    max-width: 100%;
+    height: 100%;
+}
+
+.gallery-slider li img {
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+}
+
+.gallery-slider li span {
+    background: url('images/text-bkg.png') left top repeat;
+    color: #FFFFFF;
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px 20px 19px 20px;
+    text-align: left;
+    font-size: 0.9em;
+    line-height: 1.35em;
+}
+
+.gallery-slider li span em {
+    background: url('images/info.png') left 3px no-repeat;
+    font-style: normal;
+    padding-left: 24px;
+    display: block;
+}
+
+.gallery-slider a.video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    text-align: center;
+    text-decoration: none;
+    font-size: 1.1em;
+}
+
+.gallery-slider a.video em {
+    background: url('images/video-play-xl.png') center top no-repeat;
+    display: block;
+    width: 200px;
+    margin: 0 auto;
+    height: auto;
+    line-height: 276px;
+    position: relative;
+    top: 40%;
+    text-decoration: none;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-style: normal;
+    text-shadow: 1px 1px 1px #000000;
+}
+
+.gallery-slider a.video:hover em { background-position: center -500px; }
+
+
+.gallery-thumbs {
+    display: block;
+    float: left;
+    clear: left;
+    width: 98%;
+    margin: 0 0 20px 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.gallery-thumbs li {
+    float: left;
+    display: block;
+    cursor: pointer;
+    width: 9%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.gallery-thumbs li.active img { border: 2px solid #0079CA; }
+
+.gallery-thumbs li img {
+    float: left;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 1px;
+    border: 2px solid transparent;
+}
+
+.gallery-thumbs li img:hover {
+    opacity: 0.7;
+    border: 2px solid #0079CA;
+}
+
+.gallery-thumbs li em.video {
+    background: url('images/video-play-xs.png') center center no-repeat;
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+
+.gallery-info {
+    display: block;
+    position: relative;
+    float: left;
+    clear: left;
+    width: 100%;
+    list-style-type: none;
+}
+
+.gallery-info li {
+    display: none;
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%;
+    height: auto;
+    padding-bottom: 50px;
+}
+
+
+@media (max-width: 1480px) {
+    .gallery-slider a.video em {top: 20%;}
+}
+
+@media (max-width: 1030px) {
+    .gallery-thumbs li { width: 15%; }
+    .gallery-slider a.video em {top: 10%;}
+}

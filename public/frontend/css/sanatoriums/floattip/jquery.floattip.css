@@ -1,0 +1,38 @@
+.floatTip {
+    display: none;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    z-index: 1000;
+    width: auto;
+    height: auto;
+    background: transparent;
+}
+
+.floatTip > * {
+    position: relative;
+    width: auto;
+    min-width: 350px;
+    display: block;
+    margin: 0;
+    padding: 7px 15px 7px 7px;
+    background: #eee url('images/close.png') right top no-repeat;
+    border: 1px solid #efefef;
+    border-radius: 4px;
+    -webkit-box-shadow: 2px 2px 2px 0px rgba(176, 176, 176, 1);
+    -moz-box-shadow:    2px 2px 2px 0px rgba(176, 176, 176, 1);
+    box-shadow:         2px 2px 2px 0px rgba(176, 176, 176, 1);
+    font-weight: bold;
+    font-size: 0.85em;
+    line-height: 1.4em;
+}
+
+.floatTip em {
+    display: block;
+    width: 21px;
+    height: 16px;
+    position: absolute;
+    left: 30%;
+    bottom: -17px;
+    background: url('images/arrow.png') 0 0 no-repeat;
+}
