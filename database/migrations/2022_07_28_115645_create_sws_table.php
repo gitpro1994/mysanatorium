@@ -18,6 +18,7 @@ class CreateSwsTable extends Migration
             $table->foreignId('sanatoriums_id')->constrained()->onDelete('cascade');
             $table->foreignId('room_kinds_id')->constrained('room_kinds')->onDelete('cascade');
             $table->integer('price_table_kind')->default(1);
+            $table->integer('food_count')->default(1);
             $table->integer('room_count')->nullable();
             $table->integer('general_human_count')->nullable();
             $table->integer('minimum_human_count')->nullable();

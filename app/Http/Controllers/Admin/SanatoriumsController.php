@@ -92,9 +92,41 @@ class SanatoriumsController extends Controller
         $sanatoriums->country_id = $request->country_id;
         $sanatoriums->city_id = $request->city_id;
         $sanatoriums->company_id = $request->company_id;
-        $sanatoriums->group_name = 'group_' . $request->country_id;
-        $sanatoriums->status = 1;
-        $sanatoriums->save();
+        $sanatoriums->name = $request->name;
+        $sanatoriums->search_title = $request->search_title;
+        $sanatoriums->meta_title = $request->meta_title;
+        $sanatoriums->meta_description = $request->meta_description;
+        $sanatoriums->meta_keywords = $request->meta_keywords;
+        $sanatoriums->meta_H1 = $request->meta_H1;
+        $sanatoriums->slug = $request->slug;
+        $sanatoriums->address = $request->address;
+        $sanatoriums->currency_id = $request->currency_id;
+        $sanatoriums->youtube_video_link = $request->youtube_video_link;
+        $sanatoriums->bron_email = $request->bron_email;
+        $sanatoriums->rate = $request->rate;
+        $sanatoriums->phone_number = $request->phone_number;
+        $sanatoriums->map = $request->map;
+        $sanatoriums->_3d_map = $request->_3d_map;
+        $sanatoriums->latitude = $request->latitude;
+        $sanatoriums->longitude = $request->longitude;
+        $sanatoriums->tax_price = $request->tax_price;
+        $sanatoriums->transfer_link = $request->transfer_link;
+        $sanatoriums->number_of_staff = ($request->number_of_staff == "on") ? 1 : 0;
+        $sanatoriums->tax_included = ($request->tax_included == "on") ? 1 : 0;
+        $sanatoriums->transfer_included = ($request->transfer_included == "on") ? 1 : 0;
+        $sanatoriums->main_description = $request->main_description;
+        $sanatoriums->reservation_rules = $request->reservation_rules;
+        $sanatoriums->payment_rules = $request->payment_rules;
+        $sanatoriums->reservation_contract = $request->reservation_contract;
+        $sanatoriums->advantages = $request->advantages;
+        $sanatoriums->important_to_know = $request->important_to_know;
+        $sanatoriums->treatment_package_price = $request->treatment_package_price;
+        $sanatoriums->paid_medical_procedures = $request->paid_medical_procedures;
+        $sanatoriums->check_in_for_adults = $request->check_in_for_adults;
+        $sanatoriums->check_in_for_children = $request->check_in_for_children;
+        $sanatoriums->daily_price_group = 'daily_price_group_' . $request->country_id;
+        $sanatoriums->weekly_price_group = 'weekly_price_group_' . $request->country_id;
+        $sanatoriums->optional_price_group = 'optional_price_group_' . $request->country_id;
 
         if ($request->file('main_image')) {
             $file = $request->file('main_image');
@@ -116,44 +148,9 @@ class SanatoriumsController extends Controller
             $file->move(public_path('backend/images/sanatoriums'), $filename_youtube_image);
             $sanatoriums->youtube_image = $filename_youtube_image;
         }
-        DB::table('group_' . $request->country_id)->insert([
-            "sanatoriums_id" => $sanatoriums->id,
-            "name" => $request->name,
-            "search_title" => $request->search_title,
-            "meta_title" => $request->meta_title,
-            "meta_description" => $request->meta_description,
-            "meta_keywords" => $request->meta_keywords,
-            "meta_H1" => $request->meta_H1,
-            "slug" => $request->slug,
-            "address" => $request->address,
-            "currency_id" => $request->currency_id,
-            "youtube_video_link" => $request->youtube_video_link,
-            "bron_email" => $request->bron_email,
-            "rate" => $request->rate,
-            "phone_number" => $request->phone_number,
-            "map" => $request->map,
-            "_3d_map" => $request->_3d_map,
-            "latitude" => $request->latitude,
-            "longitude" => $request->longitude,
-            "tax_price" => $request->tax_price,
-            "transfer_link" => $request->transfer_link,
-            "number_of_staff" => ($request->number_of_staff == "on") ? 1 : 0,
-            "tax_included" => ($request->tax_included == "on") ? 1 : 0,
-            "transfer_included" => ($request->transfer_included == "on") ? 1 : 0,
-            "main_description" => $request->main_description,
-            "reservation_rules" => $request->reservation_rules,
-            "payment_rules" => $request->payment_rules,
-            "reservation_contract" => $request->reservation_contract,
-            "advantages" => $request->advantages,
-            "important_to_know" => $request->important_to_know,
-            "treatment_package_price" => $request->treatment_package_pri,
-            "paid_medical_procedures" => $request->paid_medical_procedur,
-            "check_in_for_adults" => $request->check_in_for_adults,
-            "check_in_for_children" => $request->check_in_for_children,
-            "main_image" => $filename_main_image,
-            "second_image" => $filename_second_image,
-            "youtube_image" => $filename_youtube_image
-        ]);
+
+        $sanatoriums->status = 1;
+        $sanatoriums->save();
         toast('Yeni sanatoriya məlumatları əlavə edildi', 'success');
         return redirect()->route('admin.sanatoriums');
     }
@@ -910,16 +907,17 @@ class SanatoriumsController extends Controller
 
     public function wizart_save(Request $request, $sanatorium_id)
     {
+        $sanatorium = Sanatoriums::find($sanatorium_id);
         $ptk = Sws::where('sanatoriums_id', $sanatorium_id)->first();
         if ($ptk['price_table_kind'] == 1) {
-            $table_name = 'daily_price_group_';
+            $table_name = $sanatorium->daily_price_group;
         } elseif ($ptk['price_table_kind'] == 2) {
-            $table_name = 'weekly_price_group_';
+            $table_name = $sanatorium->weekly_price_group;
         } else {
-            $table_name = 'optional_price_group_';
+            $table_name = $sanatorium->optional_price_group;
         }
-        DB::table($table_name . get_sanatoriums_info($sanatorium_id, 'country_id'))->where('sanatoriums_id', $sanatorium_id)->delete();
-        Sws::where('sanatoriums_id', $sanatorium_id)->update(['price_table_kind' => $request->price_table_kind]);
+        DB::table($table_name)->where('sanatoriums_id', $sanatorium_id)->delete();
+        Sws::where('sanatoriums_id', $sanatorium_id)->update(['price_table_kind' => $request->price_table_kind, 'food_count' => $request->food_count]);
         if ($request->price_table_kind == 2 || $request->price_table_kind == 3) {
             WizartOptionals::where('sanatoriums_id', $sanatorium_id)->delete();
             for ($i = 0; $i < count($request->min_day); $i++) {
@@ -1109,7 +1107,7 @@ class SanatoriumsController extends Controller
     public function get_calendar(Request $request, $sanatorium_id)
     {
         $sanatoriums = Sanatoriums::find($sanatorium_id);
-        $sanatorium_selected = DB::table('group_' . $sanatoriums['country_id'])->first();
+
         $room = RoomKinds::find($request->room_id);
         $room_informations = Sws::where('room_kinds_id', $room['id'])->where('sanatoriums_id', $sanatorium_id)->first();
         $wizart_optional = WizartOptionals::where('sanatoriums_id', $sanatorium_id)->get();
@@ -1287,19 +1285,35 @@ class SanatoriumsController extends Controller
                                                 <select name="room_price" class="form-control" id="room_price">';
         for ($i = 1; $i <= $room_informations['general_human_count']; $i++) {
             $html .= '<optgroup label="Ümumi nəfər sayı">';
-            $html .= '<option value="' . $i . '-HBT"> ' . $i . ' nəfər üçün / 2 dəfə yemək / Müalicə daxil</option>';
-            $html .= '<option value="' . $i . '-FBT"> ' . $i . ' nəfər üçün / 3 dəfə yemək / Müalicə daxil</option>';
-            $html .= '<option value="' . $i . '-HB"> ' . $i . ' nəfər üçün / 2 dəfə yemək / Müalicəsiz</option>';
-            $html .= '<option value="' . $i . '-FB"> ' . $i . ' nəfər üçün / 3 dəfə yemək / Müalicəsiz</option>';
+            if (get_food_count($sanatorium_id) == 1) {
+                $html .= '<option value="' . $i . '-HBT"> ' . $i . ' nəfər üçün / 2 dəfə yemək / Müalicə daxil</option>';
+                $html .= '<option value="' . $i . '-HB"> ' . $i . ' nəfər üçün / 2 dəfə yemək / Müalicəsiz</option>';
+                $html .= '<option value="' . $i . '-FBT"> ' . $i . ' nəfər üçün / 3 dəfə yemək / Müalicə daxil</option>';
+                $html .= '<option value="' . $i . '-FB"> ' . $i . ' nəfər üçün / 3 dəfə yemək / Müalicəsiz</option>';
+            } elseif (get_food_count($sanatorium_id) == 2) {
+                $html .= '<option value="' . $i . '-HBT"> ' . $i . ' nəfər üçün / 2 dəfə yemək / Müalicə daxil</option>';
+                $html .= '<option value="' . $i . '-HB"> ' . $i . ' nəfər üçün / 2 dəfə yemək / Müalicəsiz</option>';
+            } elseif (get_food_count($sanatorium_id) == 3) {
+                $html .= '<option value="' . $i . '-FBT"> ' . $i . ' nəfər üçün / 3 dəfə yemək / Müalicə daxil</option>';
+                $html .= '<option value="' . $i . '-FB"> ' . $i . ' nəfər üçün / 3 dəfə yemək / Müalicəsiz</option>';
+            }
             $html .= '</optgroup>';
         }
         if ($room_informations['for'] == 1) {
             if ($room_informations['possible_additional_beds'] > 0) {
                 $html .= '<optgroup label="Böyüklər üçün Əlavə yataq">';
-                $html .= '<option value="1-pod-HBT">2 dəfə yemək / Müalicə daxil</option>';
-                $html .= '<option value="1-pod-FBT">3 dəfə yemək / Müalicə daxil</option>';
-                $html .= '<option value="1-pod-HB">2 dəfə yemək / Müalicəsiz</option>';
-                $html .= '<option value="1-pod-FB">3 dəfə yemək / Müalicəsiz</option>';
+                if (get_food_count($sanatorium_id) == 1) {
+                    $html .= '<option value="1-pod-HBT">2 dəfə yemək / Müalicə daxil</option>';
+                    $html .= '<option value="1-pod-HB">2 dəfə yemək / Müalicəsiz</option>';
+                    $html .= '<option value="1-pod-FBT">3 dəfə yemək / Müalicə daxil</option>';
+                    $html .= '<option value="1-pod-FB">3 dəfə yemək / Müalicəsiz</option>';
+                } elseif (get_food_count($sanatorium_id) == 2) {
+                    $html .= '<option value="1-pod-HBT">2 dəfə yemək / Müalicə daxil</option>';
+                    $html .= '<option value="1-pod-HB">2 dəfə yemək / Müalicəsiz</option>';
+                } elseif (get_food_count($sanatorium_id) == 3) {
+                    $html .= '<option value="1-pod-FBT">3 dəfə yemək / Müalicə daxil</option>';
+                    $html .= '<option value="1-pod-FB">3 dəfə yemək / Müalicəsiz</option>';
+                }
                 $html .= '</optgroup>';
             }
         }
@@ -1307,26 +1321,51 @@ class SanatoriumsController extends Controller
         foreach ($stchild as $i => $child) {
             if ($child['paid_or_not'] == 1) {
                 $html .= '<optgroup label="' . $child["min_age"] . ' - ' . $child["max_age"] . ' yaş aralığı">';
-                $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-range-HBT"> 2 dəfə yemək / Müalicə daxil</option>';
-                $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-range-FBT"> 3 dəfə yemək / Müalicə daxil</option>';
+                if (get_food_count($sanatorium_id) == 1) {
+                    $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-range-HBT"> 2 dəfə yemək / Müalicə daxil</option>';
+                    $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-range-FBT"> 3 dəfə yemək / Müalicə daxil</option>';
+                } elseif (get_food_count($sanatorium_id) == 2) {
+                    $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-range-HBT"> 2 dəfə yemək / Müalicə daxil</option>';
+                } elseif (get_food_count($sanatorium_id) == 3) {
+                    $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-range-FBT"> 3 dəfə yemək / Müalicə daxil</option>';
+                }
                 if ($room_informations['possible_additional_beds'] > 0) {
                     $html .= '<optgroup label="' . $child["min_age"] . ' - ' . $child["max_age"] . ' yaş aralığı üçün Əlavə yataq">';
-                    $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-child-pod-HBT">2 dəfə yemək / Müalicə daxil</option>';
-                    $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-child-pod-FBT">3 dəfə yemək / Müalicə daxil</option>';
+                    if (get_food_count($sanatorium_id) == 1) {
+                        $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-child-pod-HBT">2 dəfə yemək / Müalicə daxil</option>';
+                        $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-child-pod-FBT">3 dəfə yemək / Müalicə daxil</option>';
+                    } elseif (get_food_count($sanatorium_id) == 2) {
+                        $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-child-pod-HBT">2 dəfə yemək / Müalicə daxil</option>';
+                    } elseif (get_food_count($sanatorium_id) == 2) {
+                        $html .= '<option value="' . $child["min_age"] . '-' . $child["max_age"] . '-child-pod-FBT">3 dəfə yemək / Müalicə daxil</option>';
+                    }
+                    $html .= '</optgroup>';
                 }
-                $html .= '</optgroup>';
             }
         }
 
         foreach ($stoutchild as $i => $outchild) {
             if ($outchild['paid_or_not'] == 1) {
                 $html .= '<optgroup label="' . $outchild["min_age"] . ' - ' . $outchild["max_age"] . ' yaş aralığı">';
-                $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-HB"> 2 dəfə yemək / Müalicəsiz</option>';
-                $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-FB"> 3 dəfə yemək / Müalicəsiz</option>';
+                if (get_food_count($sanatorium_id) == 1) {
+                    $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-HB"> 2 dəfə yemək / Müalicəsiz</option>';
+                    $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-FB"> 3 dəfə yemək / Müalicəsiz</option>';
+                } elseif (get_food_count($sanatorium_id) == 2) {
+                    $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-HB"> 2 dəfə yemək / Müalicəsiz</option>';
+                } elseif (get_food_count($sanatorium_id) == 3) {
+                    $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-FB"> 3 dəfə yemək / Müalicəsiz</option>';
+                }
+
                 if ($room_informations['possible_additional_beds'] > 0) {
                     $html .= '<optgroup label="' . $outchild["min_age"] . ' - ' . $outchild["max_age"] . ' yaş aralığı üçün Əlavə yataq">';
-                    $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-HB">2 dəfə yemək / Müalicəsiz</option>';
-                    $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-FB">3 dəfə yemək / Müalicəsiz</option>';
+                    if (get_food_count($sanatorium_id) == 1) {
+                        $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-HB">2 dəfə yemək / Müalicəsiz</option>';
+                        $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-FB">3 dəfə yemək / Müalicəsiz</option>';
+                    } elseif (get_food_count($sanatorium_id) == 2) {
+                        $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-HB">2 dəfə yemək / Müalicəsiz</option>';
+                    } elseif (get_food_count($sanatorium_id) == 3) {
+                        $html .= '<option value="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-FB">3 dəfə yemək / Müalicəsiz</option>';
+                    }
                 }
                 $html .= '</optgroup>';
             }
@@ -1396,115 +1435,229 @@ class SanatoriumsController extends Controller
         $html .= '<tbody class="table-body">';
         for ($i = 1; $i <= $room_informations['general_human_count']; $i++) {
             $html .= '<tr><td colspan="' . $this->dateDiffInDays($request->start_date, $request->end_date) . '"><h4>' . $i . ' nəfər üçün qiymət özəllikləri</h4></td></tr>';
-            $html .= '<tr>
+            if (get_food_count($sanatorium_id) == 1) {
+                $html .= '<tr>
             <td class="w-25"><ul class="table-informations"><li class="menu-item">Nəfər sayı -';
-            for ($j = 1; $j <= $i; $j++) {
-                $html .= '<span><i class="fas fa-user text-info"></i></span>';
-            }
-            $html .= '</li><li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+                for ($j = 1; $j <= $i; $j++) {
+                    $html .= '<span><i class="fas fa-user text-info"></i></span>';
+                }
+                $html .= '</li><li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
 
-            $html .= '</ul></td>';
-            foreach ($ranges as $range) {
-                $html .= '<td class="' . $i . '-HBT">
+                $html .= '</ul></td>';
+                foreach ($ranges as $range) {
+                    $html .= '<td class="' . $i . '-HBT">
                 <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" step="any" name="' . $i . '-HBT" value="' . get_price($sanatorium_id, $room["id"], $i . '-HBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
                 </td>';
-            }
-            $html .= '</tr>';
+                }
+                $html .= '</tr>';
 
-            $html .= '<tr>
+                $html .= '<tr>
             <td class="w-25"><ul class="table-informations"><li class="menu-item">Nəfər sayı -';
-            for ($j = 1; $j <= $i; $j++) {
-                $html .= '<span><i class="fas fa-user text-info"></i></span>';
-            }
-            $html .= '</li><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+                for ($j = 1; $j <= $i; $j++) {
+                    $html .= '<span><i class="fas fa-user text-info"></i></span>';
+                }
+                $html .= '</li><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
 
-            $html .= '</ul></td>';
-            foreach ($ranges as $range) {
-                $html .= '<td class="' . $i . '-FBT">
+                $html .= '</ul></td>';
+                foreach ($ranges as $range) {
+                    $html .= '<td class="' . $i . '-FBT">
                 <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" name="' . $i . '-FBT" value="' . get_price($sanatorium_id, $room["id"], $i . '-FBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
                 </td>';
-            }
-            $html .= '</tr>';
+                }
+                $html .= '</tr>';
 
-            $html .= '<tr>
+                $html .= '<tr>
             <td class="w-25"><ul class="table-informations"><li class="menu-item">Nəfər sayı -';
-            for ($j = 1; $j <= $i; $j++) {
-                $html .= '<span><i class="fas fa-user text-info"></i></span>';
-            }
-            $html .= '</li><li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
+                for ($j = 1; $j <= $i; $j++) {
+                    $html .= '<span><i class="fas fa-user text-info"></i></span>';
+                }
+                $html .= '</li><li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
 
-            $html .= '</ul></td>';
-            foreach ($ranges as $range) {
-                $html .= '<td class="' . $i . '-HB">
+                $html .= '</ul></td>';
+                foreach ($ranges as $range) {
+                    $html .= '<td class="' . $i . '-HB">
                 <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" class="form-control" value="' . get_price($sanatorium_id, $room["id"], $i . '-HB', $range->format('Y-m-d'), $request->optional) . '" name="' . $i . '-HB">
                 </td>';
-            }
-            $html .= '</tr>';
+                }
+                $html .= '</tr>';
 
-            $html .= '<tr>
+                $html .= '<tr>
             <td class="w-25"><ul class="table-informations"><li class="menu-item">Nəfər sayı -';
-            for ($j = 1; $j <= $i; $j++) {
-                $html .= '<span><i class="fas fa-user text-info"></i></span>';
-            }
-            $html .= '</li><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
+                for ($j = 1; $j <= $i; $j++) {
+                    $html .= '<span><i class="fas fa-user text-info"></i></span>';
+                }
+                $html .= '</li><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
 
-            $html .= '</ul></td>';
-            foreach ($ranges as $range) {
-                $html .= '<td class="' . $i . '-FB">
+                $html .= '</ul></td>';
+                foreach ($ranges as $range) {
+                    $html .= '<td class="' . $i . '-FB">
                 <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" class="form-control" value="' . get_price($sanatorium_id, $room["id"], $i . '-FB', $range->format('Y-m-d'), $request->optional) . '" name="' . $i . '-FB">
                 </td>';
+                }
+                $html .= '</tr>';
+            } elseif (get_food_count($sanatorium_id) == 2) {
+                $html .= '<tr>
+            <td class="w-25"><ul class="table-informations"><li class="menu-item">Nəfər sayı -';
+                for ($j = 1; $j <= $i; $j++) {
+                    $html .= '<span><i class="fas fa-user text-info"></i></span>';
+                }
+                $html .= '</li><li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+
+                $html .= '</ul></td>';
+                foreach ($ranges as $range) {
+                    $html .= '<td class="' . $i . '-HBT">
+                <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" step="any" name="' . $i . '-HBT" value="' . get_price($sanatorium_id, $room["id"], $i . '-HBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
+                </td>';
+                }
+                $html .= '</tr>';
+
+                $html .= '<tr>
+            <td class="w-25"><ul class="table-informations"><li class="menu-item">Nəfər sayı -';
+                for ($j = 1; $j <= $i; $j++) {
+                    $html .= '<span><i class="fas fa-user text-info"></i></span>';
+                }
+                $html .= '</li><li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
+
+                $html .= '</ul></td>';
+                foreach ($ranges as $range) {
+                    $html .= '<td class="' . $i . '-HB">
+                <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" class="form-control" value="' . get_price($sanatorium_id, $room["id"], $i . '-HB', $range->format('Y-m-d'), $request->optional) . '" name="' . $i . '-HB">
+                </td>';
+                }
+                $html .= '</tr>';
+            } elseif (get_food_count($sanatorium_id) == 3) {
+
+                $html .= '<tr>
+            <td class="w-25"><ul class="table-informations"><li class="menu-item">Nəfər sayı -';
+                for ($j = 1; $j <= $i; $j++) {
+                    $html .= '<span><i class="fas fa-user text-info"></i></span>';
+                }
+                $html .= '</li><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+
+                $html .= '</ul></td>';
+                foreach ($ranges as $range) {
+                    $html .= '<td class="' . $i . '-FBT">
+                <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" name="' . $i . '-FBT" value="' . get_price($sanatorium_id, $room["id"], $i . '-FBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
+                </td>';
+                }
+                $html .= '</tr>';
+
+
+
+                $html .= '<tr>
+            <td class="w-25"><ul class="table-informations"><li class="menu-item">Nəfər sayı -';
+                for ($j = 1; $j <= $i; $j++) {
+                    $html .= '<span><i class="fas fa-user text-info"></i></span>';
+                }
+                $html .= '</li><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
+
+                $html .= '</ul></td>';
+                foreach ($ranges as $range) {
+                    $html .= '<td class="' . $i . '-FB">
+                <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" class="form-control" value="' . get_price($sanatorium_id, $room["id"], $i . '-FB', $range->format('Y-m-d'), $request->optional) . '" name="' . $i . '-FB">
+                </td>';
+                }
+                $html .= '</tr>';
             }
-            $html .= '</tr>';
         }
         $html .= '<tr><td colspan="' . $this->dateDiffInDays($request->start_date, $request->end_date) . '"></td></tr>';
 
         if ($room_informations['for'] == 1) {
             if ($room_informations['possible_additional_beds'] > 0) {
                 $html .= '<tr><td colspan="' . $this->dateDiffInDays($request->start_date, $request->end_date) . '"><h4>Əlavə yataq</h4></td></tr>';
-                $html .= '<tr>
+                if (get_food_count($sanatorium_id) == 1) {
+                    $html .= '<tr>
                     <td class="w-25"><ul class="table-informations">
                     <li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
 
-                $html .= '</ul></td>';
-                foreach ($ranges as $range) {
-                    $html .= '<td class="1-pod-HBT">
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="1-pod-HBT">
                         <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" value="' . get_price($sanatorium_id, $room["id"], '1-pod-HBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control" name="1-pod-HBT">
                         </td>';
-                }
-                $html .= '</tr>';
+                    }
+                    $html .= '</tr>';
 
-                $html .= '<tr>
+                    $html .= '<tr>
                     <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
 
-                $html .= '</ul></td>';
-                foreach ($ranges as $range) {
-                    $html .= '<td class="1-pod-FBT">
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="1-pod-FBT">
                         <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '"  class="form-control" value="' . get_price($sanatorium_id, $room["id"], '1-pod-FBT', $range->format('Y-m-d'), $request->optional) . '">
                         </td>';
-                }
-                $html .= '</tr>';
+                    }
+                    $html .= '</tr>';
 
-                $html .= '<tr>
+                    $html .= '<tr>
                     <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
 
-                $html .= '</ul></td>';
-                foreach ($ranges as $range) {
-                    $html .= '<td class="1-pod-HB">
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="1-pod-HB">
                         <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '"  class="form-control" value="' . get_price($sanatorium_id, $room["id"], '1-pod-HB', $range->format('Y-m-d'), $request->optional) . '" name="1-pod-FBT">
                         </td>';
-                }
-                $html .= '</tr>';
+                    }
+                    $html .= '</tr>';
 
-                $html .= '<tr>
+                    $html .= '<tr>
                     <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
 
-                $html .= '</ul></td>';
-                foreach ($ranges as $range) {
-                    $html .= '<td class="1-pod-FB">
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="1-pod-FB">
                         <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" class="form-control" value="' . get_price($sanatorium_id, $room["id"], '1-pod-FB', $range->format('Y-m-d'), $request->optional) . '" name="1-pod-FB">
                         </td>';
+                    }
+                    $html .= '</tr>';
+                } elseif (get_food_count($sanatorium_id) == 2) {
+                    $html .= '<tr>
+                    <td class="w-25"><ul class="table-informations">
+                    <li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="1-pod-HBT">
+                        <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" value="' . get_price($sanatorium_id, $room["id"], '1-pod-HBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control" name="1-pod-HBT">
+                        </td>';
+                    }
+                    $html .= '</tr>';
+                    $html .= '<tr>
+                    <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
+
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="1-pod-HB">
+                        <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '"  class="form-control" value="' . get_price($sanatorium_id, $room["id"], '1-pod-HB', $range->format('Y-m-d'), $request->optional) . '" name="1-pod-FBT">
+                        </td>';
+                    }
+                    $html .= '</tr>';
+                } elseif (get_food_count($sanatorium_id) == 3) {
+
+                    $html .= '<tr>
+                    <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="1-pod-FBT">
+                        <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '"  class="form-control" value="' . get_price($sanatorium_id, $room["id"], '1-pod-FBT', $range->format('Y-m-d'), $request->optional) . '">
+                        </td>';
+                    }
+                    $html .= '</tr>';
+
+
+
+                    $html .= '<tr>
+                    <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
+
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="1-pod-FB">
+                        <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" class="form-control" value="' . get_price($sanatorium_id, $room["id"], '1-pod-FB', $range->format('Y-m-d'), $request->optional) . '" name="1-pod-FB">
+                        </td>';
+                    }
+                    $html .= '</tr>';
                 }
-                $html .= '</tr>';
             }
         }
 
@@ -1519,55 +1672,107 @@ class SanatoriumsController extends Controller
                     $placeholder = "";
                 }
                 $html .= '<tr><td colspan="' . $this->dateDiffInDays($request->start_date, $request->end_date) . '"><h4>' . $child['min_age'] . " - " . $child['max_age'] . ' yaş aralığı - Müalicə daxil</h4></td></tr>';
-                $html .= '<tr>
+                if (get_food_count($sanatorium_id) == 1) {
+                    $html .= '<tr>
                 <td class="w-25"><ul class="table-informations">';
-                $html .= '<li class="menu-item">Yemək sayı - 2 dəfə </li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+                    $html .= '<li class="menu-item">Yemək sayı - 2 dəfə </li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
 
-                $html .= '</ul></td>';
-                foreach ($ranges as $range) {
-                    $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-range-HBT">
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-range-HBT">
                     <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $child['min_age'] . "-" . $child['max_age'] . '-range-HBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
                     </td>';
-                }
-                $html .= '</tr>';
+                    }
+                    $html .= '</tr>';
 
-                $html .= '<tr>
+                    $html .= '<tr>
                 <td class="w-25"><ul class="table-informations">';
-                $html .= '<li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+                    $html .= '<li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
 
-                $html .= '</ul></td>';
-                foreach ($ranges as $range) {
-                    $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-range-FBT">
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-range-FBT">
                     <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $child['min_age'] . "-" . $child['max_age'] . '-range-FBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
                     </td>';
+                    }
+                    $html .= '</tr>';
+                } elseif (get_food_count($sanatorium_id) == 2) {
+                    $html .= '<tr>
+                <td class="w-25"><ul class="table-informations">';
+                    $html .= '<li class="menu-item">Yemək sayı - 2 dəfə </li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-range-HBT">
+                    <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $child['min_age'] . "-" . $child['max_age'] . '-range-HBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
+                    </td>';
+                    }
+                    $html .= '</tr>';
+                } elseif (get_food_count($sanatorium_id) == 3) {
+
+                    $html .= '<tr>
+                <td class="w-25"><ul class="table-informations">';
+                    $html .= '<li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-range-FBT">
+                    <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $child['min_age'] . "-" . $child['max_age'] . '-range-FBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
+                    </td>';
+                    }
+                    $html .= '</tr>';
                 }
-                $html .= '</tr>';
 
 
                 if ($room_informations['possible_additional_beds'] > 0) {
                     $html .= '<tr><td colspan="' . $this->dateDiffInDays($request->start_date, $request->end_date) . '"><h4>Əlavə yataq</h4></td></tr>';
-                    $html .= '<tr>
+                    if (get_food_count($sanatorium_id) == 1) {
+                        $html .= '<tr>
                     <td class="w-25"><ul class="table-informations">
                     <li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
 
-                    $html .= '</ul></td>';
-                    foreach ($ranges as $range) {
-                        $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-child-pod-HBT">
+                        $html .= '</ul></td>';
+                        foreach ($ranges as $range) {
+                            $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-child-pod-HBT">
                         <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $child['min_age'] . "-" . $child['max_age'] . '-child-pod-HBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control" value="0">
                         </td>';
-                    }
-                    $html .= '</tr>';
+                        }
+                        $html .= '</tr>';
 
-                    $html .= '<tr>
+                        $html .= '<tr>
                     <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
 
-                    $html .= '</ul></td>';
-                    foreach ($ranges as $range) {
-                        $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-child-pod-FBT">
+                        $html .= '</ul></td>';
+                        foreach ($ranges as $range) {
+                            $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-child-pod-FBT">
                         <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $child['min_age'] . "-" . $child['max_age'] . '-child-pod-FBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control" value="0">
                         </td>';
+                        }
+                        $html .= '</tr>';
+                    } elseif (get_food_count($sanatorium_id) == 2) {
+                        $html .= '<tr>
+                    <td class="w-25"><ul class="table-informations">
+                    <li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+
+                        $html .= '</ul></td>';
+                        foreach ($ranges as $range) {
+                            $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-child-pod-HBT">
+                        <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $child['min_age'] . "-" . $child['max_age'] . '-child-pod-HBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control" value="0">
+                        </td>';
+                        }
+                        $html .= '</tr>';
+                    } elseif (get_food_count($sanatorium_id) == 3) {
+                        $html .= '<tr>
+                    <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicə daxil - <span><i class="fas fa-hospital text-success"></i></span> </li>';
+
+                        $html .= '</ul></td>';
+                        foreach ($ranges as $range) {
+                            $html .= '<td class="' . $child['min_age'] . "-" . $child['max_age'] . '-child-pod-FBT">
+                        <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $child['min_age'] . "-" . $child['max_age'] . '-child-pod-FBT', $range->format('Y-m-d'), $request->optional) . '" class="form-control" value="0">
+                        </td>';
+                        }
+                        $html .= '</tr>';
                     }
-                    $html .= '</tr>';
                 }
             }
         }
@@ -1582,54 +1787,104 @@ class SanatoriumsController extends Controller
                     $placeholder = "";
                 }
                 $html .= '<tr><td colspan="' . $this->dateDiffInDays($request->start_date, $request->end_date) . '"><h4>' . $outchild['min_age'] . " - " . $outchild['max_age'] . ' yaş aralığı - Müalicəsiz</h4></td></tr>';
-                $html .= '<tr>
+                if (get_food_count($sanatorium_id) == 1) {
+                    $html .= '<tr>
                 <td class="w-25"><ul class="table-informations">';
-                $html .= '<li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
+                    $html .= '<li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
 
-                $html .= '</ul></td>';
-                foreach ($ranges as $range) {
-                    $html .= '<td class="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-HB">
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-HB">
                     <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-HB', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
                     </td>';
-                }
-                $html .= '</tr>';
+                    }
+                    $html .= '</tr>';
 
-                $html .= '<tr>
+                    $html .= '<tr>
                 <td class="w-25"><ul class="table-informations">';
-                $html .= '<li class="menu-item">Yemək sayı - 3 dəfə</li>  <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>    ';
+                    $html .= '<li class="menu-item">Yemək sayı - 3 dəfə</li>  <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>    ';
 
-                $html .= '</ul></td>';
-                foreach ($ranges as $range) {
-                    $html .= '<td class="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-FB">
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-FB">
                     <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-FB', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
                     </td>';
+                    }
+                    $html .= '</tr>';
+                } elseif (get_food_count($sanatorium_id) == 2) {
+                    $html .= '<tr>
+                <td class="w-25"><ul class="table-informations">';
+                    $html .= '<li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
+
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-HB">
+                    <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-HB', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
+                    </td>';
+                    }
+                    $html .= '</tr>';
+                } elseif (get_food_count($sanatorium_id) == 3) {
+                    $html .= '<tr>
+                <td class="w-25"><ul class="table-informations">';
+                    $html .= '<li class="menu-item">Yemək sayı - 3 dəfə</li>  <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>    ';
+
+                    $html .= '</ul></td>';
+                    foreach ($ranges as $range) {
+                        $html .= '<td class="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-FB">
+                    <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '" ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $outchild['min_age'] . "-" . $outchild['max_age'] . '-range-FB', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
+                    </td>';
+                    }
+                    $html .= '</tr>';
                 }
-                $html .= '</tr>';
 
                 if ($room_informations['possible_additional_beds'] > 0) {
                     $html .= '<tr><td colspan="' . $this->dateDiffInDays($request->start_date, $request->end_date) . '"><h4>Əlavə yataq</h4></td></tr>';
 
-                    $html .= '<tr>
+                    if (get_food_count($sanatorium_id) == 1) {
+                        $html .= '<tr>
                     <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
 
-                    $html .= '</ul></td>';
-                    foreach ($ranges as $range) {
-                        $html .= '<td class="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-HB">
+                        $html .= '</ul></td>';
+                        foreach ($ranges as $range) {
+                            $html .= '<td class="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-HB">
                         <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '"  ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-HB', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
                         </td>';
-                    }
-                    $html .= '</tr>';
+                        }
+                        $html .= '</tr>';
 
-                    $html .= '<tr>
+                        $html .= '<tr>
                     <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
 
-                    $html .= '</ul></td>';
-                    foreach ($ranges as $range) {
-                        $html .= '<td "' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-FB">
+                        $html .= '</ul></td>';
+                        foreach ($ranges as $range) {
+                            $html .= '<td "' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-FB">
                         <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '"  ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-FB', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
                         </td>';
+                        }
+                        $html .= '</tr>';
+                    } elseif (get_food_count($sanatorium_id) == 2) {
+                        $html .= '<tr>
+                    <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 2 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
+
+                        $html .= '</ul></td>';
+                        foreach ($ranges as $range) {
+                            $html .= '<td class="' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-HB">
+                        <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '"  ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-HB', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
+                        </td>';
+                        }
+                        $html .= '</tr>';
+                    } elseif (get_food_count($sanatorium_id) == 3) {
+                        $html .= '<tr>
+                    <td class="w-25"><ul class="table-informations"><li class="menu-item">Yemək sayı - 3 dəfə</li> <li class="menu-item">Müalicəsiz - <span><i class="fas fa-times text-danger"></i></span> </li>';
+
+                        $html .= '</ul></td>';
+                        foreach ($ranges as $range) {
+                            $html .= '<td "' . $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-FB">
+                        <input type="text" readonly id="' . (in_array($range->format('Y-m-d'), $selected_room_status) ? 'price_input_red' : '') . '"  ' . $class . ' placeholder="' . $placeholder . '" value="' . get_price($sanatorium_id, $room["id"], $outchild['min_age'] . "-" . $outchild['max_age'] . '-child-pod-FB', $range->format('Y-m-d'), $request->optional) . '" class="form-control">
+                        </td>';
+                        }
+                        $html .= '</tr>';
                     }
-                    $html .= '</tr>';
                 }
             }
         }

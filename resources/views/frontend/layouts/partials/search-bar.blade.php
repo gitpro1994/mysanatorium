@@ -52,7 +52,7 @@
                                                 @foreach($city->getSanatoriums as $sanatorium)
                                                 <li style="border-bottom: 1px dashed #d9d9d9">
                                                     <input type="checkbox" name="snt_slct[]" id="snt_{{$sanatorium->getCountry['id']}}.{{ $sanatorium->getCity['id'] }}.{{ $sanatorium->id }}" value="{{ $sanatorium->id }}" onclick="get_destination_select(this,'selected_sanatorium','');">
-                                                    <label for="snt_{{$sanatorium->getCountry['id']}}.{{ $sanatorium->getCity['id'] }}.{{ $sanatorium->id }}" data-name="sanatorium">{{ get_sanatorium_info('group_'.$sanatorium->getCountry['id'],$sanatorium->id, 'name') }}</label>
+                                                    <label for="snt_{{$sanatorium->getCountry['id']}}.{{ $sanatorium->getCity['id'] }}.{{ $sanatorium->id }}" data-name="sanatorium">{{ $sanatorium->name }}</label>
                                                 </li>
                                                 @endforeach
                                             </ul>
@@ -141,7 +141,7 @@
                 </div>
                 <div class="col-md-3 width22">
                     <button type="button" class="form-control icon-my icon-left icon-search-calendar search-button date-f line" id="d-p-406">
-                        <input type="hidden" name="fTo " value="01.07.2022 - 08.07.2022">
+                        <input type="hidden" name="fTo" value="">
                         Прибытие &#65515; Выезд
                     </button>
                 </div>

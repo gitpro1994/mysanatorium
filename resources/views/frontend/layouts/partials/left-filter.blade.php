@@ -3,7 +3,7 @@
         <h4 class="main-color bold wraps_cont-margin">Фильтровать санатории по городам</h4>
         <ul class="ul-style search-types-5 search-main-are-areas-treatment">
             <li>
-                <input type="radio" name="couList" value="" checked="">
+                <input type="radio" name="couList" value="{{ Session::get('informations')['couList'] }}" checked="">
                 <label for="all-country">{{ getCountryName(Session::get('informations')['couList']) }}</label>
             </li>
         </ul>
@@ -11,7 +11,7 @@
 
             @foreach(getCountryCities(Session::get('informations')['couList']) as $city)
             <li class="cityList">
-                <input type="radio" id="{{ $city->id }}" name="cty_slct[]" value="{{ $city->id }}" data-city-id="{{ $city->id }}" {{ ($city->id==Session::get('informations')['cty_slct']) ? 'checked' : '' }} class="city-list">
+                <input type="radio" id="{{ $city->id }}" name="cty_slct[]" value="{{ $city->id }}" data-city-id="{{ $city->id }}" {{ ($city->id==Session::get('informations')['cty_slct'][0]) ? 'checked' : '' }} class="city-list">
                 <label for="{{ $city->id }}">
                     {{$city->title}} <span class="number-country"> </span>
                 </label>
@@ -293,7 +293,6 @@
 @section('script-code')
 <script>
     $('.city-list').click(function() {
-        alert("Salam");
         if ($('.city-list').is(':checked')) {
             var selected_city = $(this).val();
             $.ajax({

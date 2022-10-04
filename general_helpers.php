@@ -123,13 +123,6 @@ function get_sanatoriums_info($sanatorium_id, $info)
     return $data[$info];
 }
 
-function get_sanatorium_info($group_name, $sanatorium_id, $info)
-{
-    $data = DB::table($group_name)->select('*')
-        ->where('sanatoriums_id',  '=',  $sanatorium_id)
-        ->first();
-    return $data->$info;
-}
 
 function get_price_date($sanatorium_id, $room_id, $imput_name)
 {
@@ -179,7 +172,19 @@ function get_low_price($sanatorium_id)
     $data = Sanatoriums::where('id', $sanatorium_id)->first();
     $now = Carbon::now()->format('Y-m-d');
     $yearEnd = date('Y-m-d', strtotime('12-31'));
-    $min = DB::table('daily_price_group_' . $data->country_id)->where('sanatoriums_id', $sanatorium_id)->where('input_name', '1-FBT')->min('price');
+
+    if (get_sanatorium_price_kind($sanatorium_id) == 1) {
+        $table = $data->daily_price_group;
+    } elseif (get_sanatorium_price_kind($sanatorium_id) == 2) {
+        $table = $data->weekly_price_group;
+    } else {
+        $table = $data->optional_price_group;
+    }
+
+    $min = DB::table($table)->where('sanatoriums_id', $sanatorium_id)->where('input_name', '1-FBT')->min('price');
+    if (empty($min)) {
+        $min = DB::table($table)->where('sanatoriums_id', $sanatorium_id)->where('input_name', '1-HBT')->min('price');
+    }
     return $min;
 }
 
@@ -193,13 +198,11 @@ function get_last_comment($sanatorium_id, $info)
 function get_sanatorium_price_kind($sanatorium_id)
 {
     $wizart = Sws::where('sanatoriums_id', $sanatorium_id)->first();
-    if ($wizart['price_table_kind'] == 1) {
-        $kind = "Günlük qiymət cədvəli";
-    } elseif ($wizart['price_table_kind'] == 2) {
-        $kind = "Həftəlik qiymət cədvəli";
-    } else {
-        $kind = "İstəyə bağlı qiymət cədvəli";
-    }
+    return $wizart['price_table_kind'];
+}
 
-    return $kind;
+function get_food_count($sanatorium_id)
+{
+    $wizart = Sws::where('sanatoriums_id', $sanatorium_id)->first();
+    return $wizart['food_count'];
 }

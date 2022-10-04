@@ -382,8 +382,8 @@
             <div class="right-sidebar-header" style="margin-top: 25px">
                 <div class="row margin-clear">
 
-                    @foreach($city->getSanatoriums as $sanatorium)
-                    <div class="searchPanelPopOver_0" id="box_shadow__0">
+                    <div class="searchPanelPopOver_0 main-content-selected-sanatoriums" id="box_shadow__0">
+                        @foreach($city->getSanatoriums as $sanatorium)
                         <div class="row first-view sanatorium-item">
                             <div class="row">
                                 <div class="col-md-12 col-sm-12 col-xs-12 ">
@@ -453,7 +453,7 @@
                                     <div class="sanatorium_main_img">
                                         <div class="discount-picture">
 
-                                            <div class="ribbon" >
+                                            <div class="ribbon">
                                                 <span class="ribbon_contents">
                                                     <span>Вы экономите</span>
                                                     <span class="discount-prices">-0%</span>
@@ -721,8 +721,8 @@
                                 </div>
                             </div>
                         </div>
+                        @endforeach
                     </div>
-                    @endforeach
 
                     <div class="row margin-clear banner-view" style="margin-bottom: 15px;">
                         <div class="col-md-10 col-sm-10 padding-clear">

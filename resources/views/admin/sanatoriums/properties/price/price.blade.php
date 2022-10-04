@@ -50,7 +50,7 @@
                     </div>
                     <div class="col-md-12">
                         <div class="float-start">
-                            <h4><strong>{{ get_sanatorium_info($sanatorium->group_name, $sanatorium->id, 'name') }}</strong></h4>
+                            <h4><strong>{{ $sanatorium->anme }}</strong></h4>
                             <input type="hidden" value="{{ $sanatorium['id'] }}" name="sanatorium_id" id="sanatorium_id">
                             <h5>{{ get_sanatorium_price_kind($sanatorium->id) }}</h5>
                         </div>

@@ -92,20 +92,16 @@ class PageController extends Controller
 
     public function selected_sanatoriums(Request $request)
     {
-        $data['get_data'] = $request->all();
-        if ($request->snt_slct != null) {
-            $data = DB::table('group_' . get_sanatoriums_info($request->snt_slct, 'country_id'))->where('sanatoriums_id', $request->snt_slct)->first();
-            return redirect()->route('sanatorium_details', $data->sanatoriums_id);
-        } elseif ($request->snt_slct != null and $request->cty_slct != null) {
-            $city = Cities::find($request->cty_slct)->first();
-            $country_id = $city->getCountry['id'];
-            $sanatoriums = Sanatoriums::where('city_id', $request->cty_slct)->pluck('id')->toArray();
-            $data['sanatorium'] = DB::table('group_' . $country_id)->whereIn('sanatoriums_id', $sanatoriums)->get();
-            return redirect()->route('selected_sanatoriums', $data);
-        } elseif ($request->cty_slct == null and $request->snt_slct == null) {
-            $sanatoriums = Sanatoriums::where('country_id', $request->couList)->pluck('id')->toArray();
-            $data['sanatorium'] = DB::table('group_' . $request->couList)->whereIn('sanatoriums_id', $sanatoriums)->get();
-            return redirect()->route('selected_sanatoriums', $data);
+        Session::put('informations', $request->all());
+        if ($request->cty_slct[0] == null && $request->snt_slct[0] == null) {
+            $data['sanatoriums'] = Sanatoriums::where('country_id', $request->couList)->where('status', 1)->get();
+            return view('frontend.selected-sanatoriums', $data);
+        } elseif ($request->cty_slct[0] != null && $request->snt_slct[0] == null) {
+            $data['sanatoriums'] = Sanatoriums::where('city_id', $request->cty_slct[0])->where('status', 1)->get();
+            return view('frontend.selected-sanatoriums', $data);
+        } elseif ($request->snt_slct[0] != null) {
+            $data['sanatorium'] = Sanatoriums::find($request->snt_slct[0]);
+            return view('frontend.sanatorium-details', $data);
         }
     }
 
@@ -173,16 +169,6 @@ class PageController extends Controller
                 $html .= '<div class="show_review_border text-center text-danger">Отзывов о санатории нет.</div>';
             }
             $html .= '</div>
-                                <input type="hidden" value="112" id="price-san-id">
-                                <input type="hidden" value="0" id="price-modal-id">
-                                <input type="hidden" value="1" id="price-number-rooms">
-                                <input type="hidden" value="1" id="price-number-adults">
-                                <input type="hidden" value="0" id="price-number-nights">
-                                <input type="hidden" value="1" id="price-total-numbers-people">
-                                <input type="hidden" value="$" id="price-currency-symbol">
-                                <input type="hidden" value="" id="price-date-begin">
-                                <input type="hidden" value="" id="price-date-end">
-                                <input type="hidden" value="30.08.2022 - 06.09.2022" id="price-full-date">
                             </div>
                         </div>
                     </div>
@@ -204,7 +190,7 @@ class PageController extends Controller
                                     </span>
                                 </div>
                             </div>
-                            <div href="https://www.youtube.com/edit?video_id=g85zPtSHGAg&amp;video_referrer=watch" class="about_video page2_video hoverVideo top_right_video_icon ">
+                            <div href="' . $sanatorium['youtube_video_link'] . '" class="about_video page2_video hoverVideo top_right_video_icon ">
                                 <div class="video_text text-right" style="display:inline-block;">
                                     Посмотреть<br> видео
                                 </div>
@@ -251,16 +237,7 @@ class PageController extends Controller
                                         </span></a>
                                 </li>
                             </ul>
-                            <input type="hidden" value="112" id="price-san-id">
-                            <input type="hidden" value="0" id="price-modal-id">
-                            <input type="hidden" value="1" id="price-number-rooms">
-                            <input type="hidden" value="1" id="price-number-adults">
-                            <input type="hidden" value="0" id="price-number-nights">
-                            <input type="hidden" value="1" id="price-total-numbers-people">
-                            <input type="hidden" value="$" id="price-currency-symbol">
-                            <input type="hidden" value="" id="price-date-begin">
-                            <input type="hidden" value="" id="price-date-end">
-                            <input type="hidden" value="30.08.2022 - 06.09.2022" id="price-full-date">
+                            
                         </div>
                     </div>
                     <div class="otz_border col-md-0 col-sm-0"></div>
@@ -322,79 +299,232 @@ class PageController extends Controller
     {
         $sanatorium = Sanatoriums::find($sanatorium_id);
 
-        $date = explode(" - ", Session::get('informations')['fTo']);
-        dd($date);
-        $start_date = $date[0];
-        $end_date = $date[1];
+        if (Session::get('informations')['fTo'] == null) {
+            $html_response = '<div class="col-md-12
+            my_row">
+<div class="row">
+<div class="col-md-9
+                    col-sm-9
+                    col-xs-12
+                    down_all_mobile
+                    padding-none-mobile-Smart">
+    <div class="col-md-0
+                        col-sm-0
+                        col-xs-12
+                        padding-clear
+                        top_a_tag ">
+        <a id="df1_title" href="nahichevanj/sanatorij-duzdag21f9.html?fTo=01.07.2022+-+08.07.2022&amp;lRooms%5B0%5D%5B0%5D%5BlAge%5D=Adult&amp;lRooms%5B0%5D%5B0%5D%5BlTfd%5D=FBT&amp;lRooms%5B0%5D%5B1%5D%5BlAge%5D=Adult&amp;lRooms%5B0%5D%5B1%5D%5BlTfd%5D=FBT&amp;cty_slct%5B0%5D=42&amp;snt_slct%5B0%5D=111&amp;couList=81" target="_blank" data-original-title="" title="">
+            <p class="text-center" style="margin:
+                                0;">Otaq adi</p>
+        </a>
+        <div class="df_ul_Div"></div>
+    </div>
+    <div class="image_and_text_div">
+        <div class="col-lg-6
+                            col-md-7
+                            col-sm-7">
+            <div class="image_df1">
+                <div class="row">
+                    <div class="col-md-12
+                                        col-sm-12
+                                        col-xs-12
+                                        df1_image">
+                        <a href="nahichevanj/sanatorij-duzdag21f9.html?fTo=01.07.2022+-+08.07.2022&amp;lRooms%5B0%5D%5B0%5D%5BlAge%5D=Adult&amp;lRooms%5B0%5D%5B0%5D%5BlTfd%5D=FBT&amp;lRooms%5B0%5D%5B1%5D%5BlAge%5D=Adult&amp;lRooms%5B0%5D%5B1%5D%5BlTfd%5D=FBT&amp;cty_slct%5B0%5D=42&amp;snt_slct%5B0%5D=111&amp;couList=81" target="_blank" data-original-title="" title="">
+                            <img src="../../upload/sanatoriums/roomtype/5ace020fa2b41.jpg" alt="">
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6
+                            col-md-5
+                            col-sm-5
+                            col-xs-0
+                            padding-clear
+                            top_a_tag
+                            ">
+            <a id="df1_title" href="" target="_blank" data-original-title="" title="">Otaq adi</a>
+            <div class="df_ul_Div"></div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="row">
+                <div class="col-md-0
+                                    col-sm-0
+                                    col-xs-12
+                                    " id="down_version">
+                    <div class="" style="float:
+                                        left;">Цена включает</div>
+                </div>
+                <br>
+                <div class="col-md-0
+                                    col-sm-12
+                                    col-xs-0
+                                    " style="margin-top:
+                                    0;
+                                    margin-bottom:
+                                    20px;" id="down_version">
+                    <div class="">Цена включает</div>
+                </div>
+                <div class="col-md-10
+                                    col-sm-12
+                                    col-xs-12">
+                    <div class="flex-icn-items">
+                        <div class="flex-col-item">
+                            <div class="flex-title-icons">
+                                <img src="../../images/icons/nights.png" alt="">
+                                <div class="text_col-items">
+                                    <p> ночей проживания</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-col-item">
+                            <div class="flex-title-icons">
+                                <img src="../../images/icons/food.png" alt="">
+                                <div class="text_col-items">
+                                    <p> 3-x разовое питание</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-col-item">
+                            <div class="flex-title-icons">
+                                <img src="../../upload/manual/treatmentpackage/5bd851c0be1fd.png" alt="">
+                                <div class="text_col-items">
+                                    <p> 2 осмотра доктора</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-col-item">
+                            <div class="flex-title-icons">
+                                <img src="../../upload/manual/treatmentpackage/5bd85568913be.png" alt="">
+                                <div class="text_col-items">
+                                    <p> лечение в соляных пещерах</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-col-item">
+                            <div class="flex-title-icons">
+                                <img src="../../upload/manual/treatmentpackage/5bd85300b30af.png" alt="">
+                                <div class="text_col-items">
+                                    <p> бесплатный трансфер из аэропорта в санаторий</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-col-item">
+                            <div class="flex-title-icons">
+                                <img src="../../upload/manual/treatmentpackage/5bd853748568d.png" alt="">
+                                <div class="text_col-items">
+                                    <p> трансфер санаторий-пещера-санаторий</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-col-item">
+                            <div class="flex-title-icons">
+                                <img src="../../upload/manual/treatmentpackage/5e54d6e7e6fb9.png" alt="">
+                                <div class="text_col-items">
+                                    <p> бесплатная экскурсия в Нахичевань</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2
+                                    col-sm-0
+                                    col-xs-0
+                                    margin-clear" id="down_version">
+                    <div class="">Цена <br> включает </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-3
+                    col-sm-3
+                    col-xs-12
+                    page2_right_border
+                    down_all_mobile" style="text-align:
+                    center;">
+    <div class="ucken_block
+                        get_referance_border">
+        <p id="ref_title">Цена за номер</p>
+        <p id="ref_small">лечение / 3-х разове питание / <br> 1 ночей проживания / 1 взрослых </p>
+    </div>
+    <p class="price_df16
+                        darkblue" style="margin-top:
+                        0px;">
+        <span class="text18" style="color:
+                            #27A3BF">от</span>
+        ' . get_low_price($sanatorium->id) . '
+    </p>
+    <a href="nahichevanj/sanatorij-duzdag21f9.html?fTo=01.07.2022+-+08.07.2022&amp;lRooms%5B0%5D%5B0%5D%5BlAge%5D=Adult&amp;lRooms%5B0%5D%5B0%5D%5BlTfd%5D=FBT&amp;lRooms%5B0%5D%5B1%5D%5BlAge%5D=Adult&amp;lRooms%5B0%5D%5B1%5D%5BlTfd%5D=FBT&amp;cty_slct%5B0%5D=42&amp;snt_slct%5B0%5D=111&amp;couList=81" target="_blank" class="df16_number" data-original-title="" title="">Посмотреть номера</a>
+    <p class="df16_grey" style="color:#939da7;">Моментальное подтверждение</p>
+    <p class="df16_grey" style="color:#939da7;">Оплата при заселении</p>
+    <p class="df16_green">Банковская карта не требуется</p>
+    <p class="df16_green"> Мы возвращаем разницу в цене</p>
+    <p class="df16_green">Бесплатная отмена</p>
+</div>
+</div>
+</div>';
+        } else {
+            $date = explode(" - ", Session::get('informations')['fTo']);
+            $start_date = $date[0];
+            $end_date = $date[1];
 
-        $new_start_date = Carbon::parse($start_date)->format('Y-m-d');
-        $new_end_date = Carbon::parse($end_date)->format('Y-m-d');
+            $new_start_date = Carbon::parse($start_date)->format('Y-m-d');
+            $new_end_date = Carbon::parse($end_date)->format('Y-m-d');
 
-        $day_difference = Carbon::parse($new_start_date)->diffInDays($new_end_date);
+            $day_difference = Carbon::parse($new_start_date)->diffInDays($new_end_date);
 
-        $rooms = [];
-        $items = [];
+            $rooms = [];
+            $items = [];
 
-        if (isset(Session::get('informations')['fTo'])) {
-            if (isset(Session::get('informations')['lRooms'])) {
-                foreach (Session::get('informations')['lRooms'] as $room_key => $data) {
-                    foreach ($data as  $dat) {
-                        array_push($items, $dat);
+            if (isset(Session::get('informations')['fTo'])) {
+                if (isset(Session::get('informations')['lRooms'])) {
+                    foreach (Session::get('informations')['lRooms'] as $room_key => $data) {
+                        foreach ($data as  $dat) {
+                            array_push($items, $dat);
+                        }
+                        array_push($rooms, $data);
                     }
-                    array_push($rooms, $data);
                 }
             }
-        }
 
-        $adult_count_array = [];
-        $lAge = "Adult";
-        foreach ($rooms as $key => $value) {
-            $count = array_count_values(array_column($value, 'lAge'))[$lAge];
-            array_push($adult_count_array, $count);
-        }
-
-        $ids = [];
-        foreach ($sanatorium->getSrks as $srk) {
-            $room_status = RoomStatus::where('sanatoriums_id', $sanatorium['id'])->where('room_kinds_id', $srk['room_kinds_id'])->whereBetween('start_date', [$new_start_date, $new_end_date])->first();
-            if (!empty($room_status)) {
-                array_push($ids, $room_status['room_kinds_id']);
+            $adult_count_array = [];
+            $lAge = "Adult";
+            foreach ($rooms as $key => $value) {
+                $count = array_count_values(array_column($value, 'lAge'))[$lAge];
+                array_push($adult_count_array, $count);
             }
-        }
 
-        $treatment_package = ["range-FBT", "range-HBT"];
-        $simple_package = ["range-FB", "range-HB"];
-        $price = 0;
-        $prices = [];
-        foreach ($rooms as $room_key => $room) {
-            foreach ($room as $item_key => $item) {
-                if ($item['lAge'] == $lAge) {
-                    $price += RoomPrices::where('sanatoriums_id', $sanatorium['id'])
-                        ->whereNotIn('room_kinds_id', $ids)
-                        ->where('date_of_price', '>=', $start_date)
-                        ->where('date_of_price', '<', $end_date)
-                        ->where('input_name', $adult_count_array[$room_key] . $item['lTfd'])
-                        ->sum('price');
-                } else {
-                    if (in_array($item['lTfd'], $treatment_package)) {
-                        foreach ($sanatorium->getStchild as $stchild) {
-                            if ($stchild['min_age'] < $item['lAge'] && $item['lAge'] < $stchild['max_age']) {
-                                if ($stchild['paid_or_not'] == 1) {
-                                    $input_name = $stchild['min_age'] . '-' . $stchild['max_age'] . '-' . $item['lTfd'];
-                                    $price += RoomPrices::where('sanatoriums_id', $sanatorium['id'])
-                                        ->whereNotIn('room_kinds_id', $ids)
-                                        ->where('date_of_price', '>=', $start_date)
-                                        ->where('date_of_price', '<', $end_date)
-                                        ->where('input_name', $input_name)->sum('price');
-                                }
-                            }
-                        }
+            $ids = [];
+            foreach ($sanatorium->getSrks as $srk) {
+                $room_status = RoomStatus::where('sanatoriums_id', $sanatorium['id'])->where('room_kinds_id', $srk['room_kinds_id'])->whereBetween('start_date', [$new_start_date, $new_end_date])->first();
+                if (!empty($room_status)) {
+                    array_push($ids, $room_status['room_kinds_id']);
+                }
+            }
+
+            $treatment_package = ["range-FBT", "range-HBT"];
+            $simple_package = ["range-FB", "range-HB"];
+            $price = 0;
+            $prices = [];
+            foreach ($rooms as $room_key => $room) {
+                foreach ($room as $item_key => $item) {
+                    if ($item['lAge'] == $lAge) {
+                        $price += DB::table($sanatorium->daily_price_group)->where('sanatoriums_id', $sanatorium['id'])
+                            ->whereNotIn('room_kinds_id', $ids)
+                            ->where('date_of_price', '>=', $start_date)
+                            ->where('date_of_price', '<', $end_date)
+                            ->where('input_name', $adult_count_array[$room_key] . $item['lTfd'])
+                            ->sum('price');
                     } else {
-                        if (in_array($item['lTfd'], $simple_package)) {
-                            foreach ($sanatorium->getStoutchild as  $stoutchild) {
-                                if ($stoutchild['min_age'] < $item['lAge'] && $item['lAge'] < $stoutchild['max_age']) {
-                                    if ($stoutchild['paid_or_not'] == 1) {
-                                        $input_name = $stoutchild['min_age'] . '-' . $stoutchild['max_age'] . '-' . $item['lTfd'];
-                                        $price += RoomPrices::where('sanatoriums_id', $sanatorium['id'])
+                        if (in_array($item['lTfd'], $treatment_package)) {
+                            foreach ($sanatorium->getStchild as $stchild) {
+                                if ($stchild['min_age'] < $item['lAge'] && $item['lAge'] < $stchild['max_age']) {
+                                    if ($stchild['paid_or_not'] == 1) {
+                                        $input_name = $stchild['min_age'] . '-' . $stchild['max_age'] . '-' . $item['lTfd'];
+                                        $price += DB::table($sanatorium->daily_price_group)->where('sanatoriums_id', $sanatorium['id'])
                                             ->whereNotIn('room_kinds_id', $ids)
                                             ->where('date_of_price', '>=', $start_date)
                                             ->where('date_of_price', '<', $end_date)
@@ -402,113 +532,107 @@ class PageController extends Controller
                                     }
                                 }
                             }
+                        } else {
+                            if (in_array($item['lTfd'], $simple_package)) {
+                                foreach ($sanatorium->getStoutchild as  $stoutchild) {
+                                    if ($stoutchild['min_age'] < $item['lAge'] && $item['lAge'] < $stoutchild['max_age']) {
+                                        if ($stoutchild['paid_or_not'] == 1) {
+                                            $input_name = $stoutchild['min_age'] . '-' . $stoutchild['max_age'] . '-' . $item['lTfd'];
+                                            $price += DB::table($sanatorium->daily_price_group)->where('sanatoriums_id', $sanatorium['id'])
+                                                ->whereNotIn('room_kinds_id', $ids)
+                                                ->where('date_of_price', '>=', $start_date)
+                                                ->where('date_of_price', '<', $end_date)
+                                                ->where('input_name', $input_name)->sum('price');
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+                array_push($prices, $price);
+                $price = 0;
             }
-            array_push($prices, $price);
-            $price = 0;
-        }
 
 
 
 
-        $fibber_price = 0;
-        $price_sum = array_sum($prices);
-        $discount_sum = 0;
-        echo "<pre>";
-        print_r($prices);
+            $fibber_price = 0;
+            $price_sum = array_sum($prices);
+            $discount_sum = 0;
 
-        $discount_options_all = DiscountOptions::where('sanatoriums_id', $sanatorium['id'])->orderBy('id', 'DESC')->get();
-        foreach ($discount_options_all as $option) {
-            if ($new_start_date >= $option['start_date'] && $new_start_date <= $option['finish_date']) {
-                print_r("tarixden sonraki if-e girdim..." . "<br>");
-                if ($option['discounts_id'] == 1) {
-                    print_r("gune gore endirim if-ine girdim..." . "<br>");
-                    if ($day_difference >= $option['min_night'] && $day_difference <= $option['max_night']) {
-                        if ($option['depending_number_of_person'] == 1) {
-                            print_r("adam sayindan asili olaraq if-ine girdim..." . "<br>");
-                            foreach ($rooms as $key => $value) {
-                                if ($adult_count_array[$key] >= $option['number_of_person']) {
-                                    $prices[$key] = round($prices[$key] - ($prices[$key] / $day_difference) * $option['free_night']);
-                                    echo "<pre>";
-                                    print_r($prices[$key]);
-                                    $price_sum = $prices[$key];
+            $discount_options_all = DiscountOptions::where('sanatoriums_id', $sanatorium['id'])->orderBy('id', 'DESC')->get();
+            foreach ($discount_options_all as $option) {
+                if ($new_start_date >= $option['start_date'] && $new_start_date <= $option['finish_date']) {
+                    print_r("tarixden sonraki if-e girdim..." . "<br>");
+                    if ($option['discounts_id'] == 1) {
+                        print_r("gune gore endirim if-ine girdim..." . "<br>");
+                        if ($day_difference >= $option['min_night'] && $day_difference <= $option['max_night']) {
+                            if ($option['depending_number_of_person'] == 1) {
+                                print_r("adam sayindan asili olaraq if-ine girdim..." . "<br>");
+                                foreach ($rooms as $key => $value) {
+                                    if ($adult_count_array[$key] >= $option['number_of_person']) {
+                                        $prices[$key] = round($prices[$key] - ($prices[$key] / $day_difference) * $option['free_night']);
+
+                                        $price_sum = $prices[$key];
+                                    }
                                 }
-                            }
-                        } else {
-                            print_r("adam sayindan asili olmayaraq if-ine girdim..." . "<br>");
-                            $prices[$key] = round($prices[$key] - ($prices[$key] / $day_difference) * $option['free_night']);
-                            echo "<pre>";
-                            print_r($prices[$key]);
-                            $price_sum = $prices[$key];
-                        }
+                            } else {
+                                print_r("adam sayindan asili olmayaraq if-ine girdim..." . "<br>");
+                                $prices[$key] = round($prices[$key] - ($prices[$key] / $day_difference) * $option['free_night']);
 
-                        echo "<pre>";
-                        print_r($price_sum);
-                    }
-                } elseif ($option['discounts_id'] == 2) {
-                    echo "<pre>";
-                    print_r("Gelen gune qeder endirimine girdim...");
-                    $reserv_discounts = DiscountOptions::where('sanatoriums_id', $sanatorium['id'])->where('discounts_id', 2)->get();
-                    $diff = now()->diffInDays(Carbon::parse($new_start_date));
-                    foreach ($reserv_discounts as $res_dis) {
-                        echo "<pre>";
-                        print_r($price_sum);
-                        if ($diff >= $res_dis['before_reserv_day_start'] && $diff < $res_dis['before_reserv_day_end']) {
-                            $price_sum = $price_sum - ($price_sum * $res_dis['discount'] / 100);
+                                $price_sum = $prices[$key];
+                            }
                         }
-                    }
-                    echo "<pre>";
-                    print_r($price_sum);
-                } elseif ($option['discounts_id'] == 3) {
-                    if ($day_difference >= $option['min_night'] && $day_difference <= $option['max_night']) {
-                        if ($option['depending_number_of_person'] == 1) {
-                            print_r("adam sayindan asili olaraq if-ine girdim..." . "<br>");
-                            foreach ($rooms as $key => $value) {
-                                if ($adult_count_array[$key] >= $option['number_of_person']) {
-                                    $prices[$key] = round($prices[$key] - ($prices[$key] * $option['discounts']) / 100);
-                                    echo "<pre>";
-                                    print_r($prices[$key]);
-                                    $price_sum = $prices[$key];
+                    } elseif ($option['discounts_id'] == 2) {
+
+                        $reserv_discounts = DiscountOptions::where('sanatoriums_id', $sanatorium['id'])->where('discounts_id', 2)->get();
+                        $diff = now()->diffInDays(Carbon::parse($new_start_date));
+                        foreach ($reserv_discounts as $res_dis) {
+
+                            if ($diff >= $res_dis['before_reserv_day_start'] && $diff < $res_dis['before_reserv_day_end']) {
+                                $price_sum = $price_sum - ($price_sum * $res_dis['discount'] / 100);
+                            }
+                        }
+                    } elseif ($option['discounts_id'] == 3) {
+                        if ($day_difference >= $option['min_night'] && $day_difference <= $option['max_night']) {
+                            if ($option['depending_number_of_person'] == 1) {
+                                print_r("adam sayindan asili olaraq if-ine girdim..." . "<br>");
+                                foreach ($rooms as $key => $value) {
+                                    if ($adult_count_array[$key] >= $option['number_of_person']) {
+                                        $prices[$key] = round($prices[$key] - ($prices[$key] * $option['discounts']) / 100);
+
+                                        $price_sum = $prices[$key];
+                                    }
                                 }
-                            }
-                        } else {
-                            print_r("adam sayindan asili olmayaraq if-ine girdim..." . "<br>");
-                            $prices[$key] = round($prices[$key] - ($prices[$key] * $option['discounts']) / 100);
-                            echo "<pre>";
-                            print_r($prices[$key]);
-                            $price_sum = $prices[$key];
-                        }
+                            } else {
+                                print_r("adam sayindan asili olmayaraq if-ine girdim..." . "<br>");
+                                $prices[$key] = round($prices[$key] - ($prices[$key] * $option['discounts']) / 100);
 
-                        echo "<pre>";
-                        print_r($price_sum);
+                                $price_sum = $prices[$key];
+                            }
+                        }
+                    } elseif ($option['discounts_id'] == 4) {
+
+                        $price_sum = $price_sum - ($price_sum * $option['discount'] / 100);
+                        $discount_sum += $option['discount'];
+                    } elseif ($option['discounts_id'] == 5) {
+
+                        $discount_sum += $option['discount'];
+                        $fibber_price += round($price_sum / (1 - ($discount_sum / 100)));
                     }
-                } elseif ($option['discounts_id'] == 4) {
-                    print_r("umumi endirim if-ine girdim..." . "<br>");
-                    $price_sum = $price_sum - ($price_sum * $option['discount'] / 100);
-                    $discount_sum += $option['discount'];
-                    print_r($price_sum . "<br>");
-                } elseif ($option['discounts_id'] == 5) {
-                    print_r("Yalanci endirim if-ine girdim..." . "<br>");
-                    $discount_sum += $option['discount'];
-                    $fibber_price += round($price_sum / (1 - ($discount_sum / 100)));
                 }
             }
-        }
-
-        echo "<pre>";
-        print_r($price_sum);
-        die();
 
 
-        $html_response = '';
-        $html_response .= '
+
+            $html_response = '';
+            $html_response .= '
         <div class="col-md-12 my_row">
             <div class="row">
                 <div class="col-md-9 col-sm-9 col-xs-12 down_all_mobile padding-none-mobile-Smart">';
-        foreach ($rooms as $room_key => $room) {
-            $html_response .= '
+            foreach ($rooms as $room_key => $room) {
+                $html_response .= '
                         <div class="col-md-0 col-sm-0 col-xs-12 padding-clear top_a_tag ">
                         <a id="df1_title" href="" target="_blank" data-original-title="" title="">
                         <p class="text-center" style="margin: 0;">Room name ' . $room_key . '</p>
@@ -535,9 +659,9 @@ class PageController extends Controller
                     </div>
                     <div class="container-fluid">
                         <div class="row">';
-            foreach ($room as $item_key => $item) {
-                $item_key++;
-                $html_response .= '
+                foreach ($room as $item_key => $item) {
+                    $item_key++;
+                    $html_response .= '
                             <div class="row">
                             <div class="col-md-0 col-sm-0 col-xs-12 " id="down_version">
                                 <div class="" style="float: left;">' . $item_key . '-й <small>взрослый</small></div>
@@ -619,12 +743,12 @@ class PageController extends Controller
                             </div>
                         </div>
                             ';
-            }
-            $html_response .= '</div>
+                }
+                $html_response .= '</div>
                     </div>
                         ';
-        }
-        $html_response .= '</div>
+            }
+            $html_response .= '</div>
                 <div class="col-md-3 col-sm-3 col-xs-12 page2_right_border down_all_mobile" style="text-align: center;">
                     <div class="ucken_block get_referance_border">
                     <div id="green_prc"> ' . $discount_sum . ' % </div>
@@ -657,6 +781,9 @@ class PageController extends Controller
             </div>
         </div>
         ';
+        }
+
+
         return $html_response;
     }
 }

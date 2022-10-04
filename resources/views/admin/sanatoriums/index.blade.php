@@ -39,7 +39,7 @@
                             <td>
                                 {{ $sanatorium->getCountry['title'] }} ({{ $sanatorium->getCity['title'] }})
                             </td>
-                            <td>{{ get_sanatorium_info($sanatorium->group_name, $sanatorium->id, 'name') }}</td>
+                            <td>{{ $sanatorium->name }}</td>
                             <td>
                                 <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#standard-modal-{{ $sanatorium->id }}">Menu</button>
                                 <div id="standard-modal-{{ $sanatorium->id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">

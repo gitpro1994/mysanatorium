@@ -26,7 +26,30 @@
             </div>
 
             <div class="row" id="table-optional-properties">
+                <label class="col-sm-2 col-form-label">Seçilən günlər</label>
+                <div class="col-md-6" id="range-div">
+                    <section id="append_html">
+                        @foreach($sanatorium->getWizartOptional as $optional)
+                        <div class="row mt-2" id="range-content">
+                            <div class="col-md-4"> <input type="text" class="form-control" value="{{ $optional['min_day'] }}" name="min_day[]" id="min_day"> </div>
+                            <div class="col-md-4"> <input type="text" class="form-control" value="{{ $optional['max_day'] }}" name="max_day[]" id="max_day"> </div>
+                            <div class="col-md-4"> <button type="button" class="btn btn-info remove-range"> <span><i class="fas fa-times"></i></span> </button> </div>
+                        </div>
+                        @endforeach
+                    </section>
+                </div>"
+            </div>
 
+            <div class="form-group row mt-4">
+                <label for="staticEmail" class="col-sm-2 col-form-label">Yemək sayı</label>
+                <div class="col-sm-4">
+                    <select name="food_count" class="form-control" id="food_count">
+                        <option disabled>Seçin</option>
+                        <option value="1" {{ ($sanatorium->getSws->first()->food_count==1) ? 'selected' : '' }}>Hər ikisi</option>
+                        <option value="2" {{ ($sanatorium->getSws->first()->food_count==2) ? 'selected' : '' }}>2 dəfə yemək</option>
+                        <option value="3" {{ ($sanatorium->getSws->first()->food_count==3) ? 'selected' : '' }}>3 dəfə yemək</option>
+                    </select>
+                </div>
             </div>
 
             <div class="mt-2">
@@ -100,11 +123,12 @@
                         </td>
                         <td>
                             <select name="for[]" class="form-control for">
-                                <option disabled>Seçin</option>
+                                <option>Seçin</option>
                                 <option data-id="{{ $data->room_kinds_id }}" value="0" {{ $data->for==0 ? 'selected' : '' }}>Uşaq üçün</option>
                                 <option data-id="{{ $data->room_kinds_id }}" value="1" {{ $data->for==1 ? 'selected' : '' }}>Böyük üçün</option>
                             </select>
                         </td>
+
                     </tr>
                     @endforeach
                 </tbody>
